@@ -1,0 +1,2308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduNotes - Lesson Notes Management System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a0ca3;
+            --secondary: #7209b7;
+            --success: #4cc9f0;
+            --warning: #f72585;
+            --info: #4895ef;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+            --sidebar-width: 250px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fb;
+            color: var(--dark);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: rgb(251, 255, 0);
+            padding: 1rem 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .nav-links a:hover {
+            opacity: 0.8;
+        }
+        
+        .btn {
+            padding: 0.5rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+        
+        .btn-warning {
+            background-color: var(--warning);
+            color: white;
+        }
+        
+        .btn-info {
+            background-color: var(--info);
+            color: white;
+        }
+        
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+        
+        .btn-sm {
+            padding: 0.25rem 0.75rem;
+            font-size: 0.875rem;
+        }
+        
+        .hero {
+            text-align: center;
+            padding: 3rem 0;
+            background: linear-gradient(rgba(67, 97, 238, 0.05), rgba(58, 12, 163, 0.1)), url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%234361ee" opacity="0.1"/><path d="M0 0L100 100" stroke="%234361ee" stroke-width="1" opacity="0.2"/><path d="M100 0L0 100" stroke="%234361ee" stroke-width="1" opacity="0.2"/></svg>');
+            background-size: cover;
+            border-radius: 10px;
+            margin: 2rem auto;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--gray);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .section {
+            padding: 2rem 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--primary);
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary), var(--success));
+            border-radius: 2px;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+        }
+        
+        .upload-area {
+            border: 2px dashed #ddd;
+            padding: 2rem;
+            text-align: center;
+            border-radius: 5px;
+            margin-bottom: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .upload-area:hover {
+            border-color: var(--primary);
+            background-color: rgba(67, 97, 238, 0.03);
+        }
+        
+        .upload-area i {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .notes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .note-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .note-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .note-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 1rem;
+        }
+        
+        .note-body {
+            padding: 1rem;
+            flex-grow: 1;
+        }
+        
+        .note-footer {
+            padding: 1rem;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            background-color: var(--light);
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-title {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 2rem 0;
+            margin-top: auto;
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .notes-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .dashboard {
+                grid-template-columns: 1fr !important;
+            }
+            
+            .sidebar {
+                order: 2;
+            }
+            
+            .main-content {
+                order: 1;
+            }
+        }
+        
+        /* Dashboard specific styles */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 1.5rem;
+        }
+        
+        .sidebar {
+            background-color: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            height: fit-content;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+        }
+        
+        .sidebar-menu li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            color: var(--dark);
+            text-decoration: none;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+        
+        .main-content {
+            background-color: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        
+        /* Login form */
+        .login-container {
+            max-width: 400px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        /* Table styles */
+        .table-responsive {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        th {
+            background-color: var(--light);
+            font-weight: 600;
+        }
+        
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .status-pending {
+            background-color: #fff0f0;
+            color: #ff6b6b;
+        }
+        
+        .status-approved {
+            background-color: #f0fff4;
+            color: #38a169;
+        }
+        
+        .status-review {
+            background-color: #fffaf0;
+            color: #d69e2e;
+        }
+        
+        .time-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            background-color: var(--light);
+            color: var(--gray);
+        }
+        
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #eee;
+            margin-bottom: 1.5rem;
+        }
+        
+        .tab {
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .tab.active {
+            border-bottom-color: var(--primary);
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Mobile menu button */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+            }
+            
+            .nav-links.responsive {
+                display: flex;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+                padding: 1rem;
+                gap: 1rem;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            }
+        }
+        
+        /* Teacher cards */
+        .teachers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .teacher-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .teacher-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .teacher-header {
+            padding: 1.5rem 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+        
+        .teacher-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 4px solid white;
+            margin: 0 auto;
+            background-color: var(--light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--primary);
+            overflow: hidden;
+        }
+        
+        .teacher-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .teacher-body {
+            padding: 1.5rem;
+        }
+        
+        .teacher-footer {
+            padding: 1rem;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            border-radius: 10px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .close {
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        /* Rating */
+        .rating {
+            display: flex;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+        
+        .rating i {
+            color: #ddd;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        
+        .rating i.active {
+            color: #ffc107;
+        }
+        
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem;
+            background-color: white;
+            border-left: 4px solid var(--success);
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            z-index: 1000;
+            transform: translateX(100%);
+            transition: transform 0.3s;
+        }
+        
+        .toast.show {
+            transform: translateX(0);
+        }
+        
+        .toast i {
+            color: var(--success);
+            font-size: 1.25rem;
+        }
+        
+        .toast.error {
+            border-left-color: var(--warning);
+        }
+        
+        .toast.error i {
+            color: var(--warning);
+        }
+        
+        /* Profile picture upload */
+        .profile-picture {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 4px solid var(--primary);
+            margin: 0 auto 1.5rem;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .profile-picture img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .profile-picture .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .profile-picture:hover .overlay {
+            opacity: 1;
+        }
+        
+        /* Teacher notes view */
+        .teacher-notes {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        /* View note modal */
+        .note-preview {
+            background-color: var(--light);
+            border-radius: 5px;
+            padding: 1rem;
+            margin: 1rem 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .note-preview h4 {
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+        
+        .note-preview p {
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">
+                    <i class="fas fa-book-open"></i>
+                    <span>OecStaffNotes</span>
+                </div>
+                <div class="nav-links" id="navLinks">
+                    <a href="#" class="active" id="homeLink"><i class="fas fa-home"></i> Home</a>
+                    <a href="#" id="dashboardLink"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                    <a href="#" id="uploadLink"><i class="fas fa-upload"></i> Upload</a>
+                    <a href="#" id="teachersLink"><i class="fas fa-chalkboard-teacher"></i> Teachers</a>
+                    <a href="#" id="myNotesLink" class="hidden"><i class="fas fa-sticky-note"></i> My Notes</a>
+                    <a href="#" id="loginLink"><i class="fas fa-sign-in-alt"></i> Login</a>
+                    <a href="#" id="logoutLink" class="hidden"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Hero Section -->
+        <section class="hero" id="heroSection">
+            <h1>Streamline Lesson Note Management</h1>
+            <p>An efficient system for teachers to upload lesson notes and administrators to review them with ease.</p>
+            <button class="btn btn-primary" id="getStartedBtn">
+                <i class="fas fa-rocket"></i> Get Started
+            </button>
+        </section>
+
+        <!-- Features Section -->
+        <section class="section" id="featuresSection">
+            <h2 class="section-title">How It Works</h2>
+            <div class="notes-grid">
+                <div class="card">
+                    <h3><i class="fas fa-user-plus"></i> Teacher Registration</h3>
+                    <p>Teachers create accounts with their details and subject information.</p>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-upload"></i> Upload Lesson Notes</h3>
+                    <p>Teachers easily upload lesson notes with relevant metadata.</p>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-check-circle"></i> Admin Review</h3>
+                    <p>Administrators can review, approve, or provide feedback on notes.</p>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-database"></i> Organized Storage</h3>
+                    <p>All notes are organized by subject, date, and teacher for easy access.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Login Form (Initially Hidden) -->
+        <section class="section hidden" id="loginSection">
+            <div class="login-container">
+                <h2 class="section-title">Login</h2>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="email"><i class="fas fa-envelope"></i> Email</label>
+                        <input type="email" id="email" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password"><i class="fas fa-lock"></i> Password</label>
+                        <input type="password" id="password" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </button>
+                </form>
+                <p style="text-align: center; margin-top: 1rem;">
+                    Admin login: admin@school.com / admin123
+                </p>
+            </div>
+        </section>
+
+        <!-- Upload Form (Initially Hidden) -->
+        <section class="section hidden" id="uploadSection">
+            <h2 class="section-title">Upload Lesson Note</h2>
+            <div class="card">
+                <form id="uploadForm">
+                    <div class="form-group">
+                        <label for="noteTitle"><i class="fas fa-pencil-alt"></i> Lesson Title</label>
+                        <input type="text" id="noteTitle" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="noteSubject"><i class="fas fa-book"></i> Subject</label>
+                        <select id="noteSubject" class="form-control" required>
+                            <option value="">Select Subject</option>
+                            <option value="math">Mathematics</option>
+                            <option value="english">English</option>
+                            <option value="science">Science</option>
+                            <option value="history">History</option>
+                            <option value="art">Art</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="noteDate"><i class="fas fa-calendar"></i> Date</label>
+                        <input type="date" id="noteDate" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="noteClass"><i class="fas fa-users"></i> Class/Grade</label>
+                        <input type="text" id="noteClass" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-file-upload"></i> Upload Lesson Note</label>
+                        <div class="upload-area" id="dropZone">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>Drag & drop your file here or click to browse</p>
+                            <input type="file" id="fileInput" style="display: none;" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-check-circle"></i> Submit Lesson Note
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- My Notes Section (Initially Hidden) -->
+        <section class="section hidden" id="myNotesSection">
+            <h2 class="section-title">My Lesson Notes</h2>
+            <div class="card">
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Subject</th>
+                                <th>Class</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Submitted</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="myNotesTable">
+                            <!-- Teacher's notes will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard (Initially Hidden) -->
+        <section class="section hidden" id="dashboardSection">
+            <h2 class="section-title">Admin Dashboard</h2>
+            
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalTeachers">0</div>
+                    <div class="stat-title">Total Teachers</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalNotes">0</div>
+                    <div class="stat-title">Total Lesson Notes</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="pendingNotes">0</div>
+                    <div class="stat-title">Pending Review</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">4.8/5</div>
+                    <div class="stat-title">Average Rating</div>
+                </div>
+            </div>
+            
+            <div class="dashboard">
+                <div class="sidebar">
+                    <ul class="sidebar-menu">
+                        <li><a href="#" class="active" data-tab="all-notes"><i class="fas fa-list"></i> All Notes</a></li>
+                        <li><a href="#" data-tab="pending-review"><i class="fas fa-clock"></i> Pending Review</a></li>
+                        <li><a href="#" data-tab="teachers"><i class="fas fa-chalkboard-teacher"></i> Teachers</a></li>
+                        <li><a href="#" data-tab="add-teacher"><i class="fas fa-user-plus"></i> Add Teacher</a></li>
+                    </ul>
+                </div>
+                
+                <div class="main-content">
+                    <div class="tabs">
+                        <div class="tab active" data-tab="all-notes">All Notes</div>
+                        <div class="tab" data-tab="pending-review">Pending Review</div>
+                        <div class="tab" data-tab="teachers">Teachers</div>
+                        <div class="tab" data-tab="add-teacher">Add Teacher</div>
+                    </div>
+                    
+                    <div class="tab-content active" id="all-notes">
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Teacher</th>
+                                        <th>Subject</th>
+                                        <th>Class</th>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="allNotesTable">
+                                    <!-- Notes will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content" id="pending-review">
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Teacher</th>
+                                        <th>Subject</th>
+                                        <th>Submitted</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pendingNotesTable">
+                                    <!-- Pending notes will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content" id="teachers">
+                        <div class="teachers-grid" id="teachersGrid">
+                            <!-- Teachers will be populated by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content" id="add-teacher">
+                        <div class="card">
+                            <h3>Add New Teacher</h3>
+                            <form id="addTeacherForm">
+                                <div class="form-group">
+                                    <label for="teacherName"><i class="fas fa-user"></i> Full Name</label>
+                                    <input type="text" id="teacherName" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="teacherEmail"><i class="fas fa-envelope"></i> Email</label>
+                                    <input type="email" id="teacherEmail" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="teacherPassword"><i class="fas fa-lock"></i> Password</label>
+                                    <input type="password" id="teacherPassword" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="teacherSubject"><i class="fas fa-book"></i> Subject</label>
+                                    <select id="teacherSubject" class="form-control" required>
+                                        <option value="">Select Subject</option>
+                                        <option value="math">Mathematics</option>
+                                        <option value="english">English</option>
+                                        <option value="science">Science</option>
+                                        <option value="history">History</option>
+                                        <option value="art">Art</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="teacherProfilePicture"><i class="fas fa-camera"></i> Profile Picture</label>
+                                    <div class="profile-picture" id="profilePictureUpload">
+                                        <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23e9ecef'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='12' fill='%236c757d'>Upload Image</text></svg>" id="profilePicturePreview" alt="Profile Picture">
+                                        <div class="overlay">
+                                            <i class="fas fa-camera"></i>
+                                        </div>
+                                        <input type="file" id="teacherProfilePicture" style="display: none;" accept="image/*">
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-user-plus"></i> Add Teacher
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage">Operation completed successfully</span>
+    </div>
+
+    <!-- Review Modal -->
+    <div class="modal" id="reviewModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Review Lesson Note</h3>
+                <span class="close" id="closeModal">&times;</span>
+            </div>
+            <div id="modalBody">
+                <h4 id="modalNoteTitle"></h4>
+                <p><strong>Teacher:</strong> <span id="modalNoteTeacher"></span></p>
+                <p><strong>Subject:</strong> <span id="modalNoteSubject"></span></p>
+                <p><strong>Class:</strong> <span id="modalNoteClass"></span></p>
+                <p><strong>Date:</strong> <span id="modalNoteDate"></span></p>
+                
+                <div class="note-preview">
+                    <h4>Note Content Preview</h4>
+                    <p id="modalNoteContent"></p>
+                </div>
+                
+                <div class="form-group">
+                    <label for="reviewComments">Comments</label>
+                    <textarea id="reviewComments" class="form-control" rows="3"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>Rating</label>
+                    <div class="rating" id="noteRating">
+                        <i class="fas fa-star" data-value="1"></i>
+                        <i class="fas fa-star" data-value="2"></i>
+                        <i class="fas fa-star" data-value="3"></i>
+                        <i class="fas fa-star" data-value="4"></i>
+                        <i class="fas fa-star" data-value="5"></i>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <button class="btn btn-success" id="approveNote">Approve</button>
+                    <button class="btn btn-warning" id="rejectNote">Reject</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Note Modal -->
+    <div class="modal" id="viewNoteModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Lesson Note Details</h3>
+                <span class="close" id="closeViewModal">&times;</span>
+            </div>
+            <div id="viewModalBody">
+                <h4 id="viewNoteTitle"></h4>
+                <p><strong>Teacher:</strong> <span id="viewNoteTeacher"></span></p>
+                <p><strong>Subject:</strong> <span id="viewNoteSubject"></span></p>
+                <p><strong>Class:</strong> <span id="viewNoteClass"></span></p>
+                <p><strong>Date:</strong> <span id="viewNoteDate"></span></p>
+                <p><strong>Status:</strong> <span id="viewNoteStatus"></span></p>
+                <p><strong>Submitted:</strong> <span id="viewNoteSubmitted"></span></p>
+                
+                <div class="note-preview">
+                    <h4>Note Content</h4>
+                    <p id="viewNoteContent"></p>
+                </div>
+                
+                <div id="reviewDetails" class="hidden">
+                    <h4>Review Details</h4>
+                    <p><strong>Rating:</strong> <span id="viewNoteRating"></span></p>
+                    <p><strong>Comments:</strong> <span id="viewNoteComments"></span></p>
+                </div>
+                
+                <div class="form-group">
+                    <button class="btn btn-info" id="downloadNote">
+                        <i class="fas fa-download"></i> Download Note
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="logo">
+                    <i class="fas fa-book-open"></i>
+                    <span>StaffNotes</span>
+                </div>
+                <p>&copy; 2025 Lesson Notes Management System. All rights reserved | Design By Sir Prince:+233 245 324 585</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Data storage keys
+        const TEACHERS_KEY = 'edunotes_teachers';
+        const NOTES_KEY = 'edunotes_notes';
+        const ADMIN_USER = {
+            email: 'admin@school.com',
+            password: 'admin123'
+        };
+
+        // Initialize data
+        function initializeData() {
+            if (!localStorage.getItem(TEACHERS_KEY)) {
+                // Default teachers
+                const defaultTeachers = [
+                    {
+                        id: 1,
+                        name: 'John Smith',
+                        email: 'john@school.com',
+                        password: 'password123',
+                        subject: 'math',
+                        profilePicture: '',
+                        notes: 12,
+                        rating: 4.8
+                    },
+                    {
+                        id: 2,
+                        name: 'Sarah Johnson',
+                        email: 'sarah@school.com',
+                        password: 'password123',
+                        subject: 'history',
+                        profilePicture: '',
+                        notes: 8,
+                        rating: 4.5
+                    },
+                    {
+                        id: 3,
+                        name: 'Michael Brown',
+                        email: 'michael@school.com',
+                        password: 'password123',
+                        subject: 'science',
+                        profilePicture: '',
+                        notes: 15,
+                        rating: 4.9
+                    },
+                    {
+                        id: 4,
+                        name: 'Emily Davis',
+                        email: 'emily@school.com',
+                        password: 'password123',
+                        subject: 'english',
+                        profilePicture: '',
+                        notes: 10,
+                        rating: 4.7
+                    }
+                ];
+                localStorage.setItem(TEACHERS_KEY, JSON.stringify(defaultTeachers));
+            }
+
+            if (!localStorage.getItem(NOTES_KEY)) {
+                // Default notes
+                const defaultNotes = [
+                    {
+                        id: 1,
+                        title: 'Introduction to Algebra',
+                        teacherId: 1,
+                        teacher: 'John Smith',
+                        subject: 'math',
+                        class: 'Grade 9',
+                        date: '2023-10-15',
+                        status: 'approved',
+                        submitted: '2023-10-15T10:30:00',
+                        content: 'This lesson introduces students to basic algebraic concepts including variables, expressions, and simple equations. Students will learn to solve for x in linear equations and apply these skills to word problems.',
+                        rating: 5,
+                        comments: 'Excellent lesson structure with clear examples and practice problems.'
+                    },
+                    {
+                        id: 2,
+                        title: 'World War II Overview',
+                        teacherId: 2,
+                        teacher: 'Sarah Johnson',
+                        subject: 'history',
+                        class: 'Grade 10',
+                        date: '2023-10-14',
+                        status: 'pending',
+                        submitted: '2023-10-14T14:15:00',
+                        content: 'This lesson provides an overview of World War II, covering the major events, key figures, and global impact of the war. Topics include the causes of the war, major battles, the Holocaust, and the aftermath.',
+                    },
+                    {
+                        id: 3,
+                        title: 'Chemical Reactions',
+                        teacherId: 3,
+                        teacher: 'Michael Brown',
+                        subject: 'science',
+                        class: 'Grade 8',
+                        date: '2023-10-13',
+                        status: 'review',
+                        submitted: '2023-10-13T09:45:00',
+                        content: 'Students will learn about different types of chemical reactions including synthesis, decomposition, single replacement, and double replacement reactions. The lesson includes hands-on activities and safety guidelines.',
+                    },
+                    {
+                        id: 4,
+                        title: 'Shakespeare\'s Sonnets',
+                        teacherId: 4,
+                        teacher: 'Emily Davis',
+                        subject: 'english',
+                        class: 'Grade 11',
+                        date: '2023-10-12',
+                        status: 'approved',
+                        submitted: '2023-10-12T11:20:00',
+                        content: 'This lesson explores the poetic form and themes in Shakespeare\'s sonnets. Students will analyze Sonnet 18 ("Shall I compare thee to a summer\'s day?") and Sonnet 130 ("My mistress\' eyes are nothing like the sun").',
+                        rating: 4,
+                        comments: 'Good content, could use more examples of modern connections to make it more engaging for students.'
+                    }
+                ];
+                localStorage.setItem(NOTES_KEY, JSON.stringify(defaultNotes));
+            }
+        }
+
+        // Get data from localStorage
+        function getTeachers() {
+            return JSON.parse(localStorage.getItem(TEACHERS_KEY)) || [];
+        }
+
+        function getNotes() {
+            return JSON.parse(localStorage.getItem(NOTES_KEY)) || [];
+        }
+
+        // Save data to localStorage
+        function saveTeachers(teachers) {
+            localStorage.setItem(TEACHERS_KEY, JSON.stringify(teachers));
+        }
+
+        function saveNotes(notes) {
+            localStorage.setItem(NOTES_KEY, JSON.stringify(notes));
+        }
+
+        // Show toast notification
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            toastMessage.textContent = message;
+            
+            if (isError) {
+                toast.classList.add('error');
+            } else {
+                toast.classList.remove('error');
+            }
+            
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Format date
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString(undefined, options);
+        }
+
+        // Format time
+        function formatTime(dateString) {
+            const options = { hour: '2-digit', minute: '2-digit' };
+            return new Date(dateString).toLocaleTimeString(undefined, options);
+        }
+
+        // Format date and time
+        function formatDateTime(dateString) {
+            return `${formatDate(dateString)} ${formatTime(dateString)}`;
+        }
+
+        // Generate a unique ID
+        function generateId(items) {
+            return items.length > 0 ? Math.max(...items.map(item => item.id)) + 1 : 1;
+        }
+
+        // Convert image to base64
+        function convertImageToBase64(file, callback) {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function () {
+                callback(reader.result);
+            };
+            reader.onerror = function (error) {
+                console.error('Error converting image: ', error);
+            };
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize data
+            initializeData();
+            
+            // DOM Elements
+            const loginLink = document.getElementById('loginLink');
+            const logoutLink = document.getElementById('logoutLink');
+            const myNotesLink = document.getElementById('myNotesLink');
+            const getStartedBtn = document.getElementById('getStartedBtn');
+            const menuToggle = document.getElementById('menuToggle');
+            const navLinks = document.getElementById('navLinks');
+            
+            const heroSection = document.getElementById('heroSection');
+            const featuresSection = document.getElementById('featuresSection');
+            const loginSection = document.getElementById('loginSection');
+            const uploadSection = document.getElementById('uploadSection');
+            const myNotesSection = document.getElementById('myNotesSection');
+            const dashboardSection = document.getElementById('dashboardSection');
+            
+            const loginForm = document.getElementById('loginForm');
+            const uploadForm = document.getElementById('uploadForm');
+            const addTeacherForm = document.getElementById('addTeacherForm');
+            
+            const dropZone = document.getElementById('dropZone');
+            const fileInput = document.getElementById('fileInput');
+            const profilePictureUpload = document.getElementById('profilePictureUpload');
+            const teacherProfilePicture = document.getElementById('teacherProfilePicture');
+            const profilePicturePreview = document.getElementById('profilePicturePreview');
+            
+            const totalTeachers = document.getElementById('totalTeachers');
+            const totalNotes = document.getElementById('totalNotes');
+            const pendingNotes = document.getElementById('pendingNotes');
+            
+            const allNotesTable = document.getElementById('allNotesTable');
+            const pendingNotesTable = document.getElementById('pendingNotesTable');
+            const myNotesTable = document.getElementById('myNotesTable');
+            const teachersGrid = document.getElementById('teachersGrid');
+            
+            const tabs = document.querySelectorAll('.tab');
+            const sidebarLinks = document.querySelectorAll('.sidebar-menu a');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            const reviewModal = document.getElementById('reviewModal');
+            const closeModal = document.getElementById('closeModal');
+            const approveNote = document.getElementById('approveNote');
+            const rejectNote = document.getElementById('rejectNote');
+            const noteRating = document.getElementById('noteRating');
+            
+            const viewNoteModal = document.getElementById('viewNoteModal');
+            const closeViewModal = document.getElementById('closeViewModal');
+            const downloadNoteBtn = document.getElementById('downloadNote');
+            
+            let currentUser = null;
+            let currentNoteId = null;
+            let currentTeacherProfilePicture = null;
+
+            // Show login section
+            function showLogin() {
+                loginSection.classList.remove('hidden');
+                heroSection.classList.add('hidden');
+                featuresSection.classList.add('hidden');
+                uploadSection.classList.add('hidden');
+                myNotesSection.classList.add('hidden');
+                dashboardSection.classList.add('hidden');
+                logoutLink.classList.add('hidden');
+                myNotesLink.classList.add('hidden');
+                loginLink.classList.remove('hidden');
+            }
+
+            // Show upload section (after login)
+            function showUpload() {
+                uploadSection.classList.remove('hidden');
+                loginSection.classList.add('hidden');
+                heroSection.classList.add('hidden');
+                featuresSection.classList.add('hidden');
+                myNotesSection.classList.add('hidden');
+                dashboardSection.classList.add('hidden');
+                logoutLink.classList.remove('hidden');
+                myNotesLink.classList.remove('hidden');
+                loginLink.classList.add('hidden');
+            }
+
+            // Show my notes section
+            function showMyNotes() {
+                myNotesSection.classList.remove('hidden');
+                uploadSection.classList.add('hidden');
+                loginSection.classList.add('hidden');
+                heroSection.classList.add('hidden');
+                featuresSection.classList.add('hidden');
+                dashboardSection.classList.add('hidden');
+                logoutLink.classList.remove('hidden');
+                myNotesLink.classList.remove('hidden');
+                loginLink.classList.add('hidden');
+                
+                loadMyNotesTable();
+            }
+
+            // Show dashboard (admin view)
+            function showDashboard() {
+                dashboardSection.classList.remove('hidden');
+                loginSection.classList.add('hidden');
+                heroSection.classList.add('hidden');
+                featuresSection.classList.add('hidden');
+                uploadSection.classList.add('hidden');
+                myNotesSection.classList.add('hidden');
+                logoutLink.classList.remove('hidden');
+                myNotesLink.classList.add('hidden');
+                loginLink.classList.add('hidden');
+                
+                // Update dashboard stats
+                updateDashboardStats();
+                
+                // Load data tables
+                loadAllNotesTable();
+                loadPendingNotesTable();
+                loadTeachersGrid();
+            }
+
+            // Show home page
+            function showHome() {
+                heroSection.classList.remove('hidden');
+                featuresSection.classList.remove('hidden');
+                loginSection.classList.add('hidden');
+                uploadSection.classList.add('hidden');
+                myNotesSection.classList.add('hidden');
+                dashboardSection.classList.add('hidden');
+                
+                if (currentUser) {
+                    logoutLink.classList.remove('hidden');
+                    loginLink.classList.add('hidden');
+                    
+                    if (currentUser.email === ADMIN_USER.email) {
+                        myNotesLink.classList.add('hidden');
+                    } else {
+                        myNotesLink.classList.remove('hidden');
+                    }
+                } else {
+                    logoutLink.classList.add('hidden');
+                    myNotesLink.classList.add('hidden');
+                    loginLink.classList.remove('hidden');
+                }
+            }
+
+            // Update dashboard statistics
+            function updateDashboardStats() {
+                const teachers = getTeachers();
+                const notes = getNotes();
+                
+                totalTeachers.textContent = teachers.length;
+                totalNotes.textContent = notes.length;
+                pendingNotes.textContent = notes.filter(note => note.status === 'pending').length;
+            }
+
+            // Load all notes table
+            function loadAllNotesTable() {
+                const notes = getNotes();
+                allNotesTable.innerHTML = '';
+                
+                notes.forEach(note => {
+                    const row = document.createElement('tr');
+                    
+                    let statusBadge = '';
+                    if (note.status === 'approved') {
+                        statusBadge = '<span class="status-badge status-approved">Approved</span>';
+                    } else if (note.status === 'pending') {
+                        statusBadge = '<span class="status-badge status-pending">Pending</span>';
+                    } else if (note.status === 'review') {
+                        statusBadge = '<span class="status-badge status-review">In Review</span>';
+                    }
+                    
+                    row.innerHTML = `
+                        <td>${note.title}</td>
+                        <td>${note.teacher}</td>
+                        <td>${note.subject.charAt(0).toUpperCase() + note.subject.slice(1)}</td>
+                        <td>${note.class}</td>
+                        <td>${formatDate(note.date)}</td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            <button class="btn btn-primary btn-sm view-note" data-id="${note.id}"><i class="fas fa-eye"></i></button>
+                            <button class="btn btn-info btn-sm download-note" data-id="${note.id}"><i class="fas fa-download"></i></button>
+                            ${currentUser && currentUser.email === ADMIN_USER.email ? `
+                                <button class="btn btn-warning btn-sm delete-note" data-id="${note.id}"><i class="fas fa-trash"></i></button>
+                            ` : ''}
+                        </td>
+                    `;
+                    
+                    allNotesTable.appendChild(row);
+                });
+                
+                // Add event listeners to buttons
+                document.querySelectorAll('.view-note').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const noteId = parseInt(this.getAttribute('data-id'));
+                        viewNote(noteId);
+                    });
+                });
+                
+                document.querySelectorAll('.download-note').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const noteId = parseInt(this.getAttribute('data-id'));
+                        downloadNote(noteId);
+                    });
+                });
+                
+                document.querySelectorAll('.delete-note').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const noteId = parseInt(this.getAttribute('data-id'));
+                        deleteNote(noteId);
+                    });
+                });
+            }
+
+            // Load pending notes table
+            function loadPendingNotesTable() {
+                const notes = getNotes().filter(note => note.status === 'pending' || note.status === 'review');
+                pendingNotesTable.innerHTML = '';
+                
+                notes.forEach(note => {
+                    const row = document.createElement('tr');
+                    
+                    let statusBadge = '';
+                    if (note.status === 'pending') {
+                        statusBadge = '<span class="status-badge status-pending">Pending</span>';
+                    } else if (note.status === 'review') {
+                        statusBadge = '<span class="status-badge status-review">In Review</span>';
+                    }
+                    
+                    row.innerHTML = `
+                        <td>${note.title}</td>
+                        <td>${note.teacher}</td>
+                        <td>${note.subject.charAt(0).toUpperCase() + note.subject.slice(1)}</td>
+                        <td>${formatDateTime(note.submitted)}</td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            <button class="btn btn-primary btn-sm review-note" data-id="${note.id}"><i class="fas fa-check"></i> Review</button>
+                        </td>
+                    `;
+                    
+                    pendingNotesTable.appendChild(row);
+                });
+                
+                // Add event listeners to review buttons
+                document.querySelectorAll('.review-note').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const noteId = parseInt(this.getAttribute('data-id'));
+                        openReviewModal(noteId);
+                    });
+                });
+            }
+
+            // Load my notes table
+            function loadMyNotesTable() {
+                if (!currentUser || currentUser.email === ADMIN_USER.email) return;
+                
+                const notes = getNotes().filter(note => note.teacherId === currentUser.id);
+                myNotesTable.innerHTML = '';
+                
+                if (notes.length === 0) {
+                    myNotesTable.innerHTML = `
+                        <tr>
+                            <td colspan="7" style="text-align: center; padding: 2rem;">
+                                <i class="fas fa-sticky-note" style="font-size: 3rem; color: #6c757d; margin-bottom: 1rem;"></i>
+                                <p>You haven't submitted any lesson notes yet.</p>
+                                <button class="btn btn-primary" id="goToUpload" style="margin-top: 1rem;">
+                                    <i class="fas fa-upload"></i> Upload Your First Note
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                    
+                    document.getElementById('goToUpload').addEventListener('click', showUpload);
+                    return;
+                }
+                
+                notes.forEach(note => {
+                    const row = document.createElement('tr');
+                    
+                    let statusBadge = '';
+                    if (note.status === 'approved') {
+                        statusBadge = '<span class="status-badge status-approved">Approved</span>';
+                    } else if (note.status === 'pending') {
+                        statusBadge = '<span class="status-badge status-pending">Pending</span>';
+                    } else if (note.status === 'review') {
+                        statusBadge = '<span class="status-badge status-review">In Review</span>';
+                    }
+                    
+                    row.innerHTML = `
+                        <td>${note.title}</td>
+                        <td>${note.subject.charAt(0).toUpperCase() + note.subject.slice(1)}</td>
+                        <td>${note.class}</td>
+                        <td>${formatDate(note.date)}</td>
+                        <td>${statusBadge}</td>
+                        <td>${formatDateTime(note.submitted)}</td>
+                        <td>
+                            <button class="btn btn-primary btn-sm view-my-note" data-id="${note.id}"><i class="fas fa-eye"></i></button>
+                            <button class="btn btn-info btn-sm download-my-note" data-id="${note.id}"><i class="fas fa-download"></i></button>
+                        </td>
+                    `;
+                    
+                    myNotesTable.appendChild(row);
+                });
+                
+                // Add event listeners to buttons
+                document.querySelectorAll('.view-my-note').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const noteId = parseInt(this.getAttribute('data-id'));
+                        viewNote(noteId);
+                    });
+                });
+                
+                document.querySelectorAll('.download-my-note').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const noteId = parseInt(this.getAttribute('data-id'));
+                        downloadNote(noteId);
+                    });
+                });
+            }
+
+            // Load teachers grid
+            function loadTeachersGrid() {
+                const teachers = getTeachers();
+                teachersGrid.innerHTML = '';
+                
+                teachers.forEach(teacher => {
+                    const card = document.createElement('div');
+                    card.className = 'teacher-card';
+                    
+                    const profilePicture = teacher.profilePicture || "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23e9ecef'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='12' fill='%236c757d'>No Image</text></svg>";
+                    
+                    card.innerHTML = `
+                        <div class="teacher-header">
+                            <div class="teacher-avatar">
+                                <img src="${profilePicture}" alt="${teacher.name}">
+                            </div>
+                            <h3>${teacher.name}</h3>
+                            <p>${teacher.subject.charAt(0).toUpperCase() + teacher.subject.slice(1)}</p>
+                        </div>
+                        <div class="teacher-body">
+                            <p>${teacher.notes || 0} lesson notes</p>
+                            <p>${teacher.rating || 'No'} rating</p>
+                        </div>
+                        <div class="teacher-footer">
+                            <button class="btn btn-primary btn-sm view-teacher-notes" data-id="${teacher.id}">View Notes</button>
+                            ${currentUser && currentUser.email === ADMIN_USER.email ? `
+                                <button class="btn btn-danger btn-sm delete-teacher" data-id="${teacher.id}">Delete</button>
+                            ` : ''}
+                        </div>
+                    `;
+                    
+                    teachersGrid.appendChild(card);
+                });
+                
+                // Add event listeners to buttons
+                document.querySelectorAll('.view-teacher-notes').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const teacherId = parseInt(this.getAttribute('data-id'));
+                        viewTeacherNotes(teacherId);
+                    });
+                });
+                
+                document.querySelectorAll('.delete-teacher').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const teacherId = parseInt(this.getAttribute('data-id'));
+                        deleteTeacher(teacherId);
+                    });
+                });
+            }
+
+            // View note details
+            function viewNote(noteId) {
+                const notes = getNotes();
+                const note = notes.find(n => n.id === noteId);
+                
+                if (note) {
+                    // Populate view note modal
+                    document.getElementById('viewNoteTitle').textContent = note.title;
+                    document.getElementById('viewNoteTeacher').textContent = note.teacher;
+                    document.getElementById('viewNoteSubject').textContent = note.subject.charAt(0).toUpperCase() + note.subject.slice(1);
+                    document.getElementById('viewNoteClass').textContent = note.class;
+                    document.getElementById('viewNoteDate').textContent = formatDate(note.date);
+                    document.getElementById('viewNoteSubmitted').textContent = formatDateTime(note.submitted);
+                    
+                    let statusText = '';
+                    if (note.status === 'approved') {
+                        statusText = '<span class="status-badge status-approved">Approved</span>';
+                    } else if (note.status === 'pending') {
+                        statusText = '<span class="status-badge status-pending">Pending</span>';
+                    } else if (note.status === 'review') {
+                        statusText = '<span class="status-badge status-review">In Review</span>';
+                    }
+                    document.getElementById('viewNoteStatus').innerHTML = statusText;
+                    
+                    document.getElementById('viewNoteContent').textContent = note.content || 'No content available';
+                    
+                    // Show review details if note has been reviewed
+                    const reviewDetails = document.getElementById('reviewDetails');
+                    if (note.status === 'approved' && note.rating) {
+                        reviewDetails.classList.remove('hidden');
+                        document.getElementById('viewNoteRating').textContent = `${note.rating}/5`;
+                        document.getElementById('viewNoteComments').textContent = note.comments || 'No comments';
+                    } else {
+                        reviewDetails.classList.add('hidden');
+                    }
+                    
+                    // Set up download button
+                    downloadNoteBtn.setAttribute('data-id', note.id);
+                    
+                    // Show the modal
+                    viewNoteModal.style.display = 'flex';
+                }
+            }
+
+            // Download note
+            function downloadNote(noteId) {
+                const notes = getNotes();
+                const note = notes.find(n => n.id === noteId);
+                
+                if (note) {
+                    // Create a text blob with note content
+                    const noteContent = `
+Lesson Note: ${note.title}
+Teacher: ${note.teacher}
+Subject: ${note.subject}
+Class: ${note.class}
+Date: ${formatDate(note.date)}
+Status: ${note.status}
+Submitted: ${formatDateTime(note.submitted)}
+
+CONTENT:
+${note.content || 'No content available'}
+
+${note.rating ? `Rating: ${note.rating}/5` : ''}
+${note.comments ? `Comments: ${note.comments}` : ''}
+                    `;
+                    
+                    const blob = new Blob([noteContent], { type: 'text/plain' });
+                    const url = URL.createObjectURL(blob);
+                    
+                    // Create a temporary link for download
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${note.title.replace(/\s+/g, '_')}_${note.date}.txt`;
+                    document.body.appendChild(a);
+                    a.click();
+                    
+                    // Clean up
+                    setTimeout(() => {
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                    }, 100);
+                    
+                    showToast('Note downloaded successfully');
+                }
+            }
+
+            // View teacher notes
+            function viewTeacherNotes(teacherId) {
+                const teachers = getTeachers();
+                const teacher = teachers.find(t => t.id === teacherId);
+                const notes = getNotes().filter(note => note.teacherId === teacherId);
+                
+                if (teacher) {
+                    // Switch to all notes tab and filter by teacher
+                    document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                    document.querySelector('.tab[data-tab="all-notes"]').classList.add('active');
+                    document.getElementById('all-notes').classList.add('active');
+                    
+                    // Filter notes by teacher
+                    const filteredNotes = notes.filter(note => note.teacherId === teacherId);
+                    
+                    // Update table to show only this teacher's notes
+                    allNotesTable.innerHTML = '';
+                    
+                    if (filteredNotes.length === 0) {
+                        allNotesTable.innerHTML = `
+                            <tr>
+                                <td colspan="7" style="text-align: center; padding: 2rem;">
+                                    <i class="fas fa-sticky-note" style="font-size: 3rem; color: #6c757d; margin-bottom: 1rem;"></i>
+                                    <p>${teacher.name} hasn't submitted any lesson notes yet.</p>
+                                </td>
+                            </tr>
+                        `;
+                        return;
+                    }
+                    
+                    filteredNotes.forEach(note => {
+                        const row = document.createElement('tr');
+                        
+                        let statusBadge = '';
+                        if (note.status === 'approved') {
+                            statusBadge = '<span class="status-badge status-approved">Approved</span>';
+                        } else if (note.status === 'pending') {
+                            statusBadge = '<span class="status-badge status-pending">Pending</span>';
+                        } else if (note.status === 'review') {
+                            statusBadge = '<span class="status-badge status-review">In Review</span>';
+                        }
+                        
+                        row.innerHTML = `
+                            <td>${note.title}</td>
+                            <td>${note.teacher}</td>
+                            <td>${note.subject.charAt(0).toUpperCase() + note.subject.slice(1)}</td>
+                            <td>${note.class}</td>
+                            <td>${formatDate(note.date)}</td>
+                            <td>${statusBadge}</td>
+                            <td>
+                                <button class="btn btn-primary btn-sm view-note" data-id="${note.id}"><i class="fas fa-eye"></i></button>
+                                <button class="btn btn-info btn-sm download-note" data-id="${note.id}"><i class="fas fa-download"></i></button>
+                            </td>
+                        `;
+                        
+                        allNotesTable.appendChild(row);
+                    });
+                    
+                    // Add event listeners to buttons
+                    document.querySelectorAll('.view-note').forEach(button => {
+                        button.addEventListener('click', function() {
+                            const noteId = parseInt(this.getAttribute('data-id'));
+                            viewNote(noteId);
+                        });
+                    });
+                    
+                    document.querySelectorAll('.download-note').forEach(button => {
+                        button.addEventListener('click', function() {
+                            const noteId = parseInt(this.getAttribute('data-id'));
+                            downloadNote(noteId);
+                        });
+                    });
+                    
+                    showToast(`Showing lesson notes for ${teacher.name}`);
+                }
+            }
+
+            // Delete note
+            function deleteNote(noteId) {
+                if (confirm('Are you sure you want to delete this note?')) {
+                    const notes = getNotes();
+                    const updatedNotes = notes.filter(note => note.id !== noteId);
+                    saveNotes(updatedNotes);
+                    
+                    showToast('Note deleted successfully');
+                    loadAllNotesTable();
+                    updateDashboardStats();
+                }
+            }
+
+            // Delete teacher
+            function deleteTeacher(teacherId) {
+                if (confirm('Are you sure you want to delete this teacher?')) {
+                    const teachers = getTeachers();
+                    const notes = getNotes();
+                    
+                    // Check if teacher has notes
+                    const teacherNotes = notes.filter(note => note.teacherId === teacherId);
+                    if (teacherNotes.length > 0) {
+                        if (!confirm('This teacher has lesson notes. Deleting the teacher will also delete all their notes. Continue?')) {
+                            return;
+                        }
+                    }
+                    
+                    // Delete teacher and their notes
+                    const updatedTeachers = teachers.filter(teacher => teacher.id !== teacherId);
+                    const updatedNotes = notes.filter(note => note.teacherId !== teacherId);
+                    
+                    saveTeachers(updatedTeachers);
+                    saveNotes(updatedNotes);
+                    
+                    showToast('Teacher deleted successfully');
+                    loadTeachersGrid();
+                    loadAllNotesTable();
+                    loadPendingNotesTable();
+                    updateDashboardStats();
+                }
+            }
+
+            // Open review modal
+            function openReviewModal(noteId) {
+                const notes = getNotes();
+                const note = notes.find(n => n.id === noteId);
+                
+                if (note) {
+                    document.getElementById('modalNoteTitle').textContent = note.title;
+                    document.getElementById('modalNoteTeacher').textContent = note.teacher;
+                    document.getElementById('modalNoteSubject').textContent = note.subject.charAt(0).toUpperCase() + note.subject.slice(1);
+                    document.getElementById('modalNoteClass').textContent = note.class;
+                    document.getElementById('modalNoteDate').textContent = formatDate(note.date);
+                    document.getElementById('modalNoteContent').textContent = note.content || 'No content available';
+                    
+                    document.getElementById('reviewComments').value = note.comments || '';
+                    
+                    // Reset rating
+                    noteRating.querySelectorAll('i').forEach(star => {
+                        star.classList.remove('active');
+                        if (parseInt(star.getAttribute('data-value')) <= (note.rating || 0)) {
+                            star.classList.add('active');
+                        }
+                    });
+                    
+                    currentNoteId = noteId;
+                    reviewModal.style.display = 'flex';
+                }
+            }
+
+            // Close review modal
+            function closeReviewModal() {
+                reviewModal.style.display = 'none';
+                currentNoteId = null;
+            }
+
+            // Close view note modal
+            function closeViewNoteModal() {
+                viewNoteModal.style.display = 'none';
+            }
+
+            // Approve note
+            function approveCurrentNote() {
+                if (currentNoteId) {
+                    const notes = getNotes();
+                    const noteIndex = notes.findIndex(n => n.id === currentNoteId);
+                    
+                    if (noteIndex !== -1) {
+                        // Get rating
+                        let rating = 0;
+                        noteRating.querySelectorAll('i').forEach(star => {
+                            if (star.classList.contains('active')) {
+                                rating = parseInt(star.getAttribute('data-value'));
+                            }
+                        });
+                        
+                        notes[noteIndex].status = 'approved';
+                        notes[noteIndex].rating = rating;
+                        notes[noteIndex].comments = document.getElementById('reviewComments').value;
+                        
+                        saveNotes(notes);
+                        
+                        showToast('Note approved successfully');
+                        closeReviewModal();
+                        loadAllNotesTable();
+                        loadPendingNotesTable();
+                        updateDashboardStats();
+                    }
+                }
+            }
+
+            // Reject note
+            function rejectCurrentNote() {
+                if (currentNoteId) {
+                    const notes = getNotes();
+                    const noteIndex = notes.findIndex(n => n.id === currentNoteId);
+                    
+                    if (noteIndex !== -1) {
+                        notes[noteIndex].status = 'review';
+                        notes[noteIndex].comments = document.getElementById('reviewComments').value;
+                        
+                        saveNotes(notes);
+                        
+                        showToast('Note rejected and sent back for review');
+                        closeReviewModal();
+                        loadAllNotesTable();
+                        loadPendingNotesTable();
+                    }
+                }
+            }
+
+            // Event Listeners
+            loginLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                showLogin();
+            });
+            
+            logoutLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                currentUser = null;
+                showHome();
+            });
+            
+            myNotesLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                showMyNotes();
+            });
+            
+            document.getElementById('homeLink').addEventListener('click', function(e) {
+                e.preventDefault();
+                showHome();
+            });
+            
+            document.getElementById('uploadLink').addEventListener('click', function(e) {
+                e.preventDefault();
+                if (currentUser) {
+                    showUpload();
+                } else {
+                    showLogin();
+                }
+            });
+            
+            document.getElementById('dashboardLink').addEventListener('click', function(e) {
+                e.preventDefault();
+                if (currentUser && currentUser.email === ADMIN_USER.email) {
+                    showDashboard();
+                } else {
+                    showLogin();
+                }
+            });
+            
+            document.getElementById('teachersLink').addEventListener('click', function(e) {
+                e.preventDefault();
+                if (currentUser && currentUser.email === ADMIN_USER.email) {
+                    showDashboard();
+                    // Activate teachers tab
+                    document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                    document.querySelector('.tab[data-tab="teachers"]').classList.add('active');
+                    document.getElementById('teachers').classList.add('active');
+                } else {
+                    showLogin();
+                }
+            });
+
+            getStartedBtn.addEventListener('click', function() {
+                showLogin();
+            });
+
+            menuToggle.addEventListener('click', function() {
+                navLinks.classList.toggle('responsive');
+            });
+
+            // Tab functionality
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // Remove active class from all tabs and contents
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    
+                    // Add active class to current tab and content
+                    this.classList.add('active');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+            
+            // Sidebar menu functionality
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // Remove active class from all tabs, contents and sidebar links
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    sidebarLinks.forEach(l => l.classList.remove('active'));
+                    
+                    // Add active class to current tab, content and sidebar link
+                    this.classList.add('active');
+                    document.querySelector(`.tab[data-tab="${tabId}"]`).classList.add('active');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+
+            // Form Submissions
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                
+                // Check if admin
+                if (email === ADMIN_USER.email && password === ADMIN_USER.password) {
+                    currentUser = { email: ADMIN_USER.email, isAdmin: true };
+                    showDashboard();
+                    showToast('Admin login successful');
+                    return;
+                }
+                
+                // Check if teacher
+                const teachers = getTeachers();
+                const teacher = teachers.find(t => t.email === email && t.password === password);
+                
+                if (teacher) {
+                    currentUser = { 
+                        id: teacher.id, 
+                        name: teacher.name, 
+                        email: teacher.email, 
+                        isAdmin: false 
+                    };
+                    showUpload();
+                    showToast(`Welcome, ${teacher.name}`);
+                } else {
+                    showToast('Invalid email or password', true);
+                }
+            });
+            
+            uploadForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const title = document.getElementById('noteTitle').value;
+                const subject = document.getElementById('noteSubject').value;
+                const date = document.getElementById('noteDate').value;
+                const classGrade = document.getElementById('noteClass').value;
+                const file = fileInput.files[0];
+                
+                if (title && subject && date && classGrade && file) {
+                    const notes = getNotes();
+                    const teachers = getTeachers();
+                    const teacher = teachers.find(t => t.id === currentUser.id);
+                    
+                    if (teacher) {
+                        // Read file content
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const content = e.target.result;
+                            
+                            const newNote = {
+                                id: generateId(notes),
+                                title: title,
+                                teacherId: teacher.id,
+                                teacher: teacher.name,
+                                subject: subject,
+                                class: classGrade,
+                                date: date,
+                                status: 'pending',
+                                submitted: new Date().toISOString(),
+                                content: content
+                            };
+                            
+                            notes.push(newNote);
+                            saveNotes(notes);
+                            
+                            // Update teacher's note count
+                            teacher.notes = (teacher.notes || 0) + 1;
+                            saveTeachers(teachers);
+                            
+                            showToast('Lesson note uploaded successfully!');
+                            uploadForm.reset();
+                            dropZone.querySelector('p').textContent = 'Drag & drop your file here or click to browse';
+                            
+                            // If admin, show dashboard to see the new note
+                            if (currentUser.isAdmin) {
+                                showDashboard();
+                            } else {
+                                showMyNotes();
+                            }
+                        };
+                        reader.readAsText(file);
+                    }
+                }
+            });
+            
+            addTeacherForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const name = document.getElementById('teacherName').value;
+                const email = document.getElementById('teacherEmail').value;
+                const password = document.getElementById('teacherPassword').value;
+                const subject = document.getElementById('teacherSubject').value;
+                
+                if (name && email && password && subject) {
+                    const teachers = getTeachers();
+                    
+                    // Check if email already exists
+                    if (teachers.some(teacher => teacher.email === email)) {
+                        showToast('A teacher with this email already exists', true);
+                        return;
+                    }
+                    
+                    const newTeacher = {
+                        id: generateId(teachers),
+                        name: name,
+                        email: email,
+                        password: password,
+                        subject: subject,
+                        profilePicture: currentTeacherProfilePicture || '',
+                        notes: 0
+                    };
+                    
+                    teachers.push(newTeacher);
+                    saveTeachers(teachers);
+                    
+                    showToast('Teacher added successfully');
+                    addTeacherForm.reset();
+                    
+                    // Reset profile picture
+                    profilePicturePreview.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23e9ecef'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='12' fill='%236c757d'>Upload Image</text></svg>";
+                    currentTeacherProfilePicture = null;
+                    
+                    loadTeachersGrid();
+                    updateDashboardStats();
+                }
+            });
+            
+            // Profile picture upload
+            profilePictureUpload.addEventListener('click', function() {
+                teacherProfilePicture.click();
+            });
+            
+            teacherProfilePicture.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    const file = this.files[0];
+                    
+                    // Check if file is an image
+                    if (!file.type.match('image.*')) {
+                        showToast('Please select an image file', true);
+                        return;
+                    }
+                    
+                    // Convert image to base64
+                    convertImageToBase64(file, function(base64) {
+                        profilePicturePreview.src = base64;
+                        currentTeacherProfilePicture = base64;
+                    });
+                }
+            });
+            
+            // Drag and drop functionality
+            dropZone.addEventListener('click', function() {
+                fileInput.click();
+            });
+            
+            dropZone.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                dropZone.style.borderColor = '#4361ee';
+                dropZone.style.backgroundColor = '#f0f4ff';
+            });
+            
+            dropZone.addEventListener('dragleave', function() {
+                dropZone.style.borderColor = '#ddd';
+                dropZone.style.backgroundColor = 'transparent';
+            });
+            
+            dropZone.addEventListener('drop', function(e) {
+                e.preventDefault();
+                dropZone.style.borderColor = '#ddd';
+                dropZone.style.backgroundColor = 'transparent';
+                
+                if (e.dataTransfer.files.length) {
+                    fileInput.files = e.dataTransfer.files;
+                    dropZone.querySelector('p').textContent = `File selected: ${e.dataTransfer.files[0].name}`;
+                }
+            });
+            
+            // File input change event
+            fileInput.addEventListener('change', function() {
+                if (fileInput.files.length) {
+                    dropZone.querySelector('p').textContent = `File selected: ${fileInput.files[0].name}`;
+                }
+            });
+            
+            // Modal functionality
+            closeModal.addEventListener('click', closeReviewModal);
+            closeViewModal.addEventListener('click', closeViewNoteModal);
+            
+            window.addEventListener('click', function(e) {
+                if (e.target === reviewModal) {
+                    closeReviewModal();
+                }
+                if (e.target === viewNoteModal) {
+                    closeViewNoteModal();
+                }
+            });
+            
+            // Rating stars
+            noteRating.querySelectorAll('i').forEach(star => {
+                star.addEventListener('click', function() {
+                    const value = parseInt(this.getAttribute('data-value'));
+                    
+                    noteRating.querySelectorAll('i').forEach(s => {
+                        if (parseInt(s.getAttribute('data-value')) <= value) {
+                            s.classList.add('active');
+                        } else {
+                            s.classList.remove('active');
+                        }
+                    });
+                });
+            });
+            
+            approveNote.addEventListener('click', approveCurrentNote);
+            rejectNote.addEventListener('click', rejectCurrentNote);
+            
+            downloadNoteBtn.addEventListener('click', function() {
+                const noteId = parseInt(this.getAttribute('data-id'));
+                downloadNote(noteId);
+            });
+            
+            // Set current date as default for note date
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            let mm = today.getMonth() + 1;
+            let dd = today.getDate();
+            
+            if (dd < 10) dd = '0' + dd;
+            if (mm < 10) mm = '0' + mm;
+            
+            const formattedToday = `${yyyy}-${mm}-${dd}`;
+            document.getElementById('noteDate').value = formattedToday;
+            
+            // Show home page by default
+            showHome();
+        });
+    </script>
+</body>
+</html>
